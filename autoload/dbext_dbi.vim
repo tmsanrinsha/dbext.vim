@@ -944,14 +944,15 @@ sub db_connect
         #
         # LongTruncOk indicates to allow data truncation,
         # and do not report an error.
-        $conn_local = DBI->connect( $DATA_SOURCE, $uid, $pwd,
-                    { AutoCommit => 1,
+        $conn_local = DBI->connect( $DATA_SOURCE, $uid, $pwd, {
+                    AutoCommit => 1,
                     LongReadLen => 1000,
                     LongTruncOk => 1,
                     RaiseError => 0,
                     PrintError => 0,
-                    PrintWarn => 0 }
-                    );
+                    PrintWarn => 0,
+                    tdat_charset => 'UTF8',
+                    });
         # or die $DBI::errstr;
     };
 
