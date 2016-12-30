@@ -563,6 +563,7 @@ sub db_escape
     return $escaped;
 }
 
+# ここで改行をスペースに変更する
 db_set_vim_var('g:loaded_dbext_dbi_msg', 'db_remove_newlines');
 sub db_remove_newlines
 {
@@ -1373,6 +1374,7 @@ sub db_format_results
     db_debug("db_format_results H:".Dumper(@result_headers));
     db_debug('db_format_results:R count:'.scalar(@result_set));
     db_debug("db_format_results R:".Dumper(@result_set));
+    # NOTE: ここで整形
     db_format_array();
 
     # Setting the dbext_dbi_result variable to DBI: instructs
@@ -1432,6 +1434,7 @@ sub db_format_array()
     return 0;
 }
 
+# NOTE: printする部分
 db_set_vim_var('g:loaded_dbext_dbi_msg', 'db_print_results');
 # Makes the appropriate calls to add the data to the Vim dbext buffer.
 # The data can be formatted as a horizontal table
@@ -1472,6 +1475,7 @@ sub db_print_results
             # blank padding each string.
             # Add an additional 3 spaces between columns.
             foreach my $col2 ( @{$row2} ) {
+                # column nameに非ascii文字があるとおかしくなりそう
                 $fragment = substr ((defined($col2)?$col2:"").(' ' x $result_col_length[$i]), 0, $result_col_length[$i]);
                 $line .= db_remove_newlines($fragment).$col_sep_vert;
                 $i++;
@@ -1520,6 +1524,7 @@ sub db_print_results
             # Left justified
             # $fragment = substr ($col_name.(' ' x $max_col_width), 0, $max_col_width);
             # Right justified
+            # カラム名の右寄せ
             $fragment = substr ((' ' x $max_col_width).$col_name, -$max_col_width, $max_col_width);
             $formatted_headers[$i] = $fragment;
             $i++;
@@ -1537,6 +1542,7 @@ sub db_print_results
                 $fragment = "";
                 $line = "";
                 $line .= $formatted_headers[$col_nbr].' '.$col4;
+                # horizontalの方はdb_remove_newlinesで対応しているのに、こちらはdb_escapeしている
                 $lines_printed = db_vim_print($last_line, db_escape($line));
                 $last_line += $lines_printed;
                 $col_nbr++;
