@@ -1311,15 +1311,12 @@ sub db_format_results
             # every entry which we are already doing here.
             foreach my $col ( @{$row} ) {
                 $col = defined($col) ? $col : 'NULL';
-                # Remove any unprintable characters
-                # $col =~ tr/\x80-\xFF/ /d;
-                $col =~ tr/\x80-\xFF/ /;
-                # Remove the NULL character since Vim will treat this as
-                # the end of the line
-                # For more of these see:
-                #    http://www.asciitable.com/
-                #$col =~ tr/\x00/ /d;
-                $col =~ tr/\x00/ /;
+
+                if ($col =~ /[^[:cntrl:][:space:][:print:]]/) {
+                    $col = '0x' . unpack('H*', $col);
+                } else {
+                    $col =~ tr/\x00/ /;
+                }
 
                 $temp_length = db_strdisplaywidth($col);
                 $col_length[$i] = ( $temp_length > $col_length[$i] ? $temp_length : $col_length[$i] );
